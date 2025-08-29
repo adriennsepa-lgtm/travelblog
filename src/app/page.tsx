@@ -35,19 +35,21 @@
 // }
 
 import Image from "next/image";
-import MaratuaMap from "../components/maratuamap";
-import VisitBlogSection from "../components/visitbeachessection";
-import CavesSection from "../components/visitcavessection";
-import VisitOtherIslandsSection from "../components/visitotherislandsection";
+import MaratuaMap from "../components/MaratuaMap";
+import VisitBlogSection from "../components/VisitBeachesSection";
+import CavesSection from "../components/VisitCavesSection";
+import VisitOtherIslandsSection from "../components/VisitOtherIslandsSection";
+import 'leaflet/dist/leaflet.css';
+import "leaflet.markercluster/dist/MarkerCluster.css";
+import "leaflet.markercluster/dist/MarkerCluster.Default.css";
+import HotelMap from "../components/MaratuaMap";
+
+// Note: you can use local images too with next/image
 
 
 // Drop your images in /public and update the constants below
 const MAINIMAGE = "/maratua/lumantangbeach.png"
-const CARD1 = "/card-maratuapear.jpg";
-const CARD2 = "/card-citrus.jpg";
-const WATERMELON = "/card-watermelon.jpg";
-const FEATURED = "/card-featured.jpg";
-const GRID2 = "/grid-2.jpg";
+
 
 export default function TravelBlogLanding() {
   return (
@@ -75,7 +77,7 @@ export default function TravelBlogLanding() {
           </article>
 
           <div className="relative h-56 w-full overflow-hidden rounded-lg border border-neutral-200 sm:h-72">
-            <MaratuaMap />
+            <HotelMap />
           </div>
         </div>
       </section>
@@ -123,14 +125,4 @@ export default function TravelBlogLanding() {
   );
 }
 
-function Feature({ title, body }: { title: string; body: string }) {
-  return (
-    <div className="flex gap-4">
-      <div className="mt-1 h-6 w-6 flex-none rounded border border-neutral-300" />
-      <div>
-        <h4 className="font-medium">{title}</h4>
-        <p className="mt-1 text-neutral-600">{body}</p>
-      </div>
-    </div>
-  );
-}
+
