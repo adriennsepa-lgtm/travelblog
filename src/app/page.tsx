@@ -1,103 +1,136 @@
+
+// import { getHomestays } from "../app/api/jadesta/route";
+
+//   const data = await getHomestays();      
+
+
+// export default function Home() {
+
+
+//   console.log(data, "this is dataaaa")
+
+
+//   return (
+//     <div style={{ padding: 20 }}>
+
+      
+//   <h1>Homestays: { data?.count}</h1>
+//       <ul>
+//         { data?.count > 0 && data.items.map((item: any) => (
+//           <li key={item.url}>
+//             <a href={item.url} target="_blank" rel="noreferrer">
+//               {item.name || "(no title)"}
+//               <br></br>
+//             </a>
+//             {" — "}
+//             Address: {item.address || ""}
+//             {" — "}<br></br>
+//             Phone: {item.phone_primary || ""}<br></br>
+//             Price: {item.price_rp_numeric.toLocaleString()}
+//           </li>
+//         ))}
+//       </ul>
+//     </div>
+//   );
+// }
+
 import Image from "next/image";
+import MaratuaMap from "../components/maratuamap";
+import VisitBlogSection from "../components/visitbeachessection";
+import CavesSection from "../components/visitcavessection";
+import VisitOtherIslandsSection from "../components/visitotherislandsection";
 
-export default function Home() {
+
+// Drop your images in /public and update the constants below
+const MAINIMAGE = "/maratua/lumantangbeach.png"
+const CARD1 = "/card-maratuapear.jpg";
+const CARD2 = "/card-citrus.jpg";
+const WATERMELON = "/card-watermelon.jpg";
+const FEATURED = "/card-featured.jpg";
+const GRID2 = "/grid-2.jpg";
+
+export default function TravelBlogLanding() {
   return (
-    <div className="grid grid-rows-[20px_1fr_20px] items-center justify-items-center min-h-screen p-8 pb-20 gap-16 sm:p-20 font-[family-name:var(--font-geist-sans)]">
-      <main className="flex flex-col gap-[32px] row-start-2 items-center sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={180}
-          height={38}
-          priority
-        />
-        <ol className="list-inside list-decimal text-sm/6 text-center sm:text-left font-[family-name:var(--font-geist-mono)]">
-          <li className="mb-2 tracking-[-.01em]">
-            Get started by editing{" "}
-            <code className="bg-black/[.05] dark:bg-white/[.06] px-1 py-0.5 rounded font-[family-name:var(--font-geist-mono)] font-semibold">
-              src/app/page.tsx
-            </code>
-            .
-          </li>
-          <li className="tracking-[-.01em]">
-            Save and see your changes instantly.
-          </li>
-        </ol>
-
-        <div className="flex gap-4 items-center flex-col sm:flex-row">
-          <a
-            className="rounded-full border border-solid border-transparent transition-colors flex items-center justify-center bg-foreground text-background gap-2 hover:bg-[#383838] dark:hover:bg-[#ccc] font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 sm:w-auto"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={20}
-              height={20}
-            />
-            Deploy now
-          </a>
-          <a
-            className="rounded-full border border-solid border-black/[.08] dark:border-white/[.145] transition-colors flex items-center justify-center hover:bg-[#f2f2f2] dark:hover:bg-[#1a1a1a] hover:border-transparent font-medium text-sm sm:text-base h-10 sm:h-12 px-4 sm:px-5 w-full sm:w-auto md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Read our docs
-          </a>
+    <main className="min-h-screen bg-white text-neutral-900">
+      <section className="relative">
+        <div className="relative h-[48vh] w-full sm:h-[56vh] lg:h-[64vh]">
+          <Image src={MAINIMAGE} alt="Lumantang beach" fill priority className="object-cover" />
+          <div className="absolute inset-0 flex items-center justify-center">
+            <h1 className="px-6 text-center text-3xl font-semibold tracking-tight text-white sm:text-5xl">
+            Exploring Maratua Island
+                        </h1>
+          </div>
         </div>
-      </main>
-      <footer className="row-start-3 flex gap-[24px] flex-wrap items-center justify-center">
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/file.svg"
-            alt="File icon"
-            width={16}
-            height={16}
-          />
-          Learn
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/window.svg"
-            alt="Window icon"
-            width={16}
-            height={16}
-          />
-          Examples
-        </a>
-        <a
-          className="flex items-center gap-2 hover:underline hover:underline-offset-4"
-          href="https://nextjs.org?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <Image
-            aria-hidden
-            src="/globe.svg"
-            alt="Globe icon"
-            width={16}
-            height={16}
-          />
-          Go to nextjs.org →
-        </a>
+      </section>
+      <section className="mx-auto max-w-6xl gap-8 px-4 py-12 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <article className="space-y-3">
+            <h2 className="text-2xl font-semibold">Brief introduction with</h2>
+            <p className="max-w-prose text-neutral-600">
+              You can fly fom Samarinda, Taraka or you can take the sppedboat from Berau. The speedboat takes about 2-3 hours and costs around IDR 150,000 one way. From the harbor in Maratua you can take a local boat to your accommodation.
+            </p>
+            <div className="flex gap-3">
+              
+            </div>
+          </article>
+
+          <div className="relative h-56 w-full overflow-hidden rounded-lg border border-neutral-200 sm:h-72">
+            <MaratuaMap />
+          </div>
+        </div>
+      </section>
+      <section className="mx-auto max-w-6xl gap-8 px-4 pb-10 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
+          <div className="relative h-56 w-full overflow-hidden rounded-lg border border-neutral-200 sm:h-72">
+            <MaratuaMap />
+          </div>
+          <article className="space-y-3">
+            <h2 className="text-2xl font-semibold">Where to stay</h2>
+            <p className="max-w-prose text-neutral-600">
+              A subheading for this section, as long or as short as you like
+            </p>
+            
+          </article>
+        </div>
+      </section>
+
+
+      {/* Features list */}
+      <section className="">
+        <h3 className="text-xl font-semibold">Activities and places to explore</h3>
+        <VisitBlogSection />
+        <CavesSection />
+        <VisitOtherIslandsSection />
+      </section>
+
+      {/* Footer */}
+      <footer className="border-t border-neutral-200">
+        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-2 gap-4 text-sm text-neutral-500 sm:grid-cols-6">
+            <div className="col-span-2 font-medium text-neutral-900">Site name</div>
+            {Array.from({ length: 10 }).map((_, i) => (
+              <a key={i} href="#" className="hover:text-neutral-700">
+                Page
+              </a>
+            ))}
+          </div>
+          <div className="mt-6 flex items-center gap-4 text-neutral-400">
+            <span>© {new Date().getFullYear()} Your Name</span>
+          </div>
+        </div>
       </footer>
+    </main>
+  );
+}
+
+function Feature({ title, body }: { title: string; body: string }) {
+  return (
+    <div className="flex gap-4">
+      <div className="mt-1 h-6 w-6 flex-none rounded border border-neutral-300" />
+      <div>
+        <h4 className="font-medium">{title}</h4>
+        <p className="mt-1 text-neutral-600">{body}</p>
+      </div>
     </div>
   );
 }
