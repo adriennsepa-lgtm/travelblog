@@ -1,293 +1,319 @@
+// File: app/api/jadesta/route.ts
+// Next.js App Router API route that scrapes Jadesta village pages
+// and returns [ { name, address, price, phone, link, sourceUrl, lat, lng }, ... ]
+//
+// Usage:
+//   GET  /api/jadesta?urls=<comma-separated-urls>
+//   POST /api/jadesta  { "urls": ["...","..."] }
+//
+// Install deps:
+//   npm i cheerio undici zod
 
-// import { NextResponse } from "next/server";
-// import { load, CheerioAPI  } from "cheerio";
-// import type { AnyNode } from "domhandler";
+import { NextRequest } from "next/server";
+import { z } from "zod";
+import * as cheerio from "cheerio";
+import { setTimeout as sleep } from "timers/promises";
 
+const UA =
+  "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/119 Safari/537.36";
 
-// interface HomeStayData {
-//     count: number;
-//     items: [];
-// }
+export const dynamic = "force-dynamic";
+export const revalidate = 0;
 
-// // ★ Force Node runtime so Cheerio works
-// export const runtime = "nodejs";
-// export const dynamic = "force-dynamic"; // optional, but fine
-// const DESA_URLS = [
-//   "https://jadesta.kemenparekraf.go.id/desa/bohesilian_1",
-//   "https://jadesta.kemenparekraf.go.id/desa/payungpayung",
-//   "https://jadesta.kemenparekraf.go.id/desa/teluk_harapan",
-//   "https://jadesta.kemenparekraf.go.id/desa/_teluk_alulu_maratua",
-// ];
-// const ORIGIN = "https://jadesta.kemenparekraf.go.id/";
-// const UA =
-//   "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) JadestaHomestayScraper/1.0";
-// const TEL_RE = /(\+?62|0)[\d\s\-\.\(\)]{6,}/gi;
-// const PRICE_HINTS = [/harga/i, /tarif/i, /price/i, /biaya/i, /per\s*malam/i, /per\s*night/i];
-// const PRICE_RE   = /rp\s*([0-9][0-9\.\,\s]*)/ig;
+// --- Types ---
+export type Stay = {
+  name: string;
+  address?: string | null;
+  price?: string | null;
+  phone?: string | null;
+  link?: string | null;    // absolute URL
+  sourceUrl: string;       // village page that discovered it
+  lat?: number | null;     // ⬅️ added
+  lng?: number | null;     // ⬅️ added
+};
 
+const InputSchema = z.object({
+  urls: z.array(z.string().url()).min(1),
+});
 
-// const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+// --- Helpers ---
+function absolutize(href: string, base: string): string {
+  try {
+    return new URL(href, base).toString();
+  } catch {
+    return href;
+  }
+}
 
+async function fetchHTML(url: string): Promise<string> {
+  const res = await fetch(url, { headers: { "User-Agent": UA } });
+  if (!res.ok) throw new Error(`Fetch failed ${res.status} for ${url}`);
+  return await res.text();
+}
 
-// const fetchHtml = async (url: string, retries = 3, attempt = 0): Promise<string> => {
-//     try {
-//       const res = await fetch(url, {
-//         headers: { "User-Agent": "NextScraper" },
-//         cache: "no-store",
-//       });
-//       if (!res.ok) throw new Error(`HTTP ${res.status}`);
-//       return await res.text();
-//     } catch (e) {
-//       if (attempt >= retries - 1) throw e;
-//       await sleep(600 + 300 * attempt);
-//       return fetchHtml(url, retries, attempt + 1);
-//     }
-//   };
-  
-  
+// Extract phone numbers from a block of text
+function extractPhone(text: string): string | null {
+  const m = text.match(/(?:\+?62|\+?\d{1,3}|0)[\d\s\-()]{7,}/);
+  return m ? m[0].replace(/\s+/g, " ").trim() : null;
+}
 
-// const fullUrl = (url: string)  => {
-//   try {
-//     return new URL(url, ORIGIN).toString();
-//   } catch {
-//     return url;
-//   }
-// }
+// Extract price patterns like "Rp 250.000" or "$40–55"
+function extractPrice(text: string): string | null {
+  const m = text.match(/(?:Rp|IDR|\$)\s?[^\s,;()<>]{2,20}/i);
+  return m ? m[0].trim() : null;
+}
 
-// const normalizePhone = (raw: string) =>  {
-//   let s = String(raw || "").replace(/[\s\-\.\(\)]/g, "");
-//   if (s.startsWith("+")) s = "+" + s.slice(1).replace(/\D/g, "");
-//   else s = s.replace(/\D/g, "");
-//   if (s.startsWith("+62")) return s;
-//   if (s.startsWith("62")) return "+" + s;
-//   if (s.startsWith("0")) return "+62" + s.slice(1);
-//   if (s.length >= 8 && !s.startsWith("+")) return "+62" + s;
-//   return s;
-// }
+// --- Coordinates helpers ---
+function parseLatLngFromUrl(raw: string): { lat: number; lng: number } | null {
+  try {
+    const u = new URL(raw, "https://example.com");
+    const path = u.pathname + u.search + u.hash;
 
-// function extractHomestayLinks(html: string): string[] {
-//     const $ = load(html);
-//     const set = new Set<string>();
-//     $('a[href*="/homestay/"]').each((_, a) => {
-//       const href = $(a).attr("href");
-//       if (!href) return;
-//       set.add(fullUrl(href));
-//     });
-//     return Array.from(set).sort();
-//   }
+    // @lat,lng,zoom
+    const at = path.match(/@(-?\d+\.\d+),(-?\d+\.\d+)/);
+    if (at) return { lat: parseFloat(at[1]), lng: parseFloat(at[2]) };
 
-// function extractName($: CheerioAPI) {
-//   const sels = ["h1", "h2", "h3", "title", ".title", ".judul", ".card-title"];
-//   for (const s of sels) {
-//     const t = $(s).first().text().trim();
-//     if (t) return t.replace(/^\s*Homestay\s+/i, "").trim();
-//   }
-//   return $("strong,b").first().text().trim() || "";
-// }
+    // !3dLAT!4dLNG
+    const bang = path.match(/!3d(-?\d+\.\d+)!4d(-?\d+\.\d+)/);
+    if (bang) return { lat: parseFloat(bang[1]), lng: parseFloat(bang[2]) };
 
-// const extractImages = ($: CheerioAPI) => {
-//     const imgs: string[] = [];
-//     $(".homestay img, .gallery img").each((_, img) => {
-//       const src = $(img).attr("src") || $(img).attr("data-src");
-//       if (!src) return;
-//       const u = fullUrl(src);
-//       const lo = u.toLowerCase();
-//       if (lo.includes("logo") || lo.includes("icon") || lo.includes("qrcode") || lo.includes("placeholder")) return;
-//       imgs.push(u);
-//     });
-  
-//     // deduplicate
-//     return Array.from(new Set(imgs));
-//   }
-  
+    // q=lat,lng
+    const q = u.searchParams.get("q");
+    if (q) {
+      const m = q.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    }
 
-// function extractPhones($: CheerioAPI) {
-//   const phones = new Set<string>();
-//   $('a[href^="tel:"], a[href*="wa.me"], a[href*="api.whatsapp.com"]').each((_, a) => {
-//     const href = String($(a).attr("href") || "");
-//     const m = href.match(/(\+?\d[\d\s\-\.\(\)]{7,})/);
-//     if (m) phones.add(normalizePhone(m[1]));
-//   });
-//   const pageText = $("body").text();
-//   const matches = pageText.match(TEL_RE) || [];
-//   for (const m of matches) phones.add(normalizePhone(m));
-//   return Array.from(phones).filter((p) => p.replace(/\D/g, "").length >= 8).sort();
-// }
+    // ll=lat,lng
+    const ll = u.searchParams.get("ll");
+    if (ll) {
+      const m = ll.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
+      if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+    }
+  } catch {}
+  return null;
+}
 
-// function cleanAddr(s: string) {
-//   let x = (s || "").replace(/\s+/g, " ").trim();
-//   return x.replace(/Lihat Peta.*$/i, "").trim();
-// }
+function parseLatLngFromText(t: string): { lat: number; lng: number } | null {
+  // e.g., "2.2345, 118.6152" — requires 3+ decimals to avoid false positives
+  const m = t.match(/(-?\d{1,2}\.\d{3,}),\s*(-?\d{1,3}\.\d{3,})/);
+  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+  return null;
+}
 
-// function extractAddress($: CheerioAPI) {
-//   const body = $("body").text().replace(/\s+/g, " ").trim();
-//   const m = body.match(/(Alamat|Lokasi)\s*:?\s*(.{8,150})/i);
-//   if (m) return cleanAddr(m[2]);
-//   const hits: string[] = [];
-//   $("p,div,li,span").each((_, el) => {
-//     const t = $(el).text().replace(/\s+/g, " ").trim();
-//     if (t.length >= 10) {
-//       const tl = t.toLowerCase();
-//       if (tl.includes("alamat") || tl.includes("lokasi") || tl.includes("maratua") || tl.includes("berau") || tl.includes("kaltim")) {
-//         hits.push(t);
-//       }
-//     }
-//   });
-//   return cleanAddr(hits[0] || "");
-// }
+// Try common label-value patterns on detail pages
+function labeledValue($: cheerio.CheerioAPI, labels: string[]): string | null {
+  const hay = $.root().text();
+  for (const label of labels) {
+    const re = new RegExp(`${label}\\s*[:\\-]?\\s*([^\\n\\r]+)`, "i");
+    const m = hay.match(re);
+    if (m && m[1]) return m[1].trim();
+  }
+  return null;
+}
 
+async function parseDetailPage(detailUrl: string): Promise<Partial<Stay>> {
+  try {
+    const html = await fetchHTML(detailUrl);
+    const $ = cheerio.load(html);
+    const text = $.root().text().replace(/\s+/g, " ").trim();
 
-// // If you already have this, keep yours.
-// const PRICE_WORD = /(harga|price|tarif)/i;
-// const RP_TOKEN   = /rp/i;
-// // Matches e.g. "Rp 1.500.000", "Rp1,500,000", "Rp 1 500 000"
+    // Name
+    const name =
+      $("h1, h2, .title, .judul, .page-title").first().text().trim() ||
+      $('meta[property="og:title"]').attr("content") ||
+      $('meta[name="title"]').attr("content") ||
+      null;
 
-// const looksLikeCode = (s: string) =>
-//   /(\$\s*\(|\bvar\s+|\blet\s+|\bconst\s+|function\s*\(|=>|\)\s*;)/i.test(s);
+    // Address
+    const address =
+      labeledValue($, ["Alamat", "Address", "Lokasi"]) ||
+      $(".alamat,.address,.location").first().text().trim() ||
+      (text.match(/(Maratua|Berau|Kalimantan Timur)[^.|\n\r]{0,120}/i)?.[0] || null);
 
-// const compact = (s: string) => s.replace(/\s+/g, " ").trim();
+    // Phone / Price
+    const phone =
+      $("a[href^='tel:']").first().attr("href")?.replace(/^tel:/, "") ||
+      extractPhone(text);
 
-// const parseRupiahNumber = (s: string): number => {
-//   // keep digits only
-//   const num = s.replace(/[^\d]/g, "");
-//   return num ? Number(num) : 0;
-// };
+    const price = labeledValue($, ["Harga", "Tarif", "Price"]) || extractPrice(text);
 
-// /**
-//  * Extracts the first (or smallest) "Rp ..." value from a homestay page.
-//  * Returns both raw text and numeric rupiah.
-//  */
-// export const extractPrice = ($: CheerioAPI): { price_raw: string; price_rp_numeric: number } => {
-//   // 1) Remove noise nodes so .text() won’t suck in scripts
-//   $("script, style, noscript, template").remove();
-//   // also remove JSON-LD blobs
-//   $('script[type="application/ld+json"]').remove();
+    // Coordinates: check map embeds/links, JSON-LD geo, then naked text
+    let lat: number | undefined;
+    let lng: number | undefined;
 
-//   // 2) Build candidate text blocks (short, likely price-bearing)
-//   const candidates: string[] = [];
+    $("iframe[src], a[href]").each((_, el) => {
+      if (lat !== undefined && lng !== undefined) return;
+      const src = ($(el).attr("src") || $(el).attr("href") || "").toString();
+      if (/maps\.google|google\.com\/maps|goo\.gl\/maps|openstreetmap|osm\.org/i.test(src)) {
+        const p = parseLatLngFromUrl(src);
+        if (p) { lat = p.lat; lng = p.lng; }
+      }
+    });
 
-//   // Meta description sometimes carries a price
-//   $('meta[name="description"], meta[property="og:description"]').each((_, el) => {
-//     const v = ($(el).attr("content") || "").trim();
-//     if (v) candidates.push(compact(v));
-//   });
+    if (lat === undefined || lng === undefined) {
+      $("script[type='application/ld+json']").each((_, s) => {
+        if (lat !== undefined && lng !== undefined) return;
+        try {
+          const data = JSON.parse($(s).contents().text());
+          const arr = Array.isArray(data) ? data : [data];
+          for (const d of arr) {
+            const g = d.geo || (d.address && d.address.geo);
+            const plat = g?.latitude ?? g?.lat ?? d.latitude;
+            const plng = g?.longitude ?? g?.lng ?? d.longitude;
+            if (typeof plat === "number" && typeof plng === "number") {
+              lat = plat; lng = plng; break;
+            }
+          }
+        } catch {}
+      });
+    }
 
-//   // Short text nodes from typical content tags
-//   $("h1,h2,h3,h4,p,li,span,small,strong,b,div").each((_, el: AnyNode) => {
-//     const t = compact($(el).text() || "");
-//     if (!t) return;
-//     // ignore long paragraphs without "Rp" or price words
-//     if (!RP_TOKEN.test(t) && !PRICE_WORD.test(t)) return;
-//     // skip if it looks like code accidentally scraped
-//     if (looksLikeCode(t)) return;
-//     candidates.push(t);
-//   });
+    if (lat === undefined || lng === undefined) {
+      const p = parseLatLngFromText(text);
+      if (p) { lat = p.lat; lng = p.lng; }
+    }
 
-//   // 3) Scan candidates for price tokens, collect all numbers
-//   type Hit = { raw: string; num: number };
-//   const hits: Hit[] = [];
+    return { name: name || undefined, address, phone, price, lat, lng };
+  } catch (e) {
+    console.error("detail error", detailUrl, e);
+    return {};
+  }
+}
 
-//   for (const block of candidates) {
-//     // reset regex state per block
-//     PRICE_RE.lastIndex = 0;
-//     let m: RegExpExecArray | null;
-//     while ((m = PRICE_RE.exec(block))) {
-//       const rawNum = m[1];
-//       const num = parseRupiahNumber(rawNum);
-//       if (num > 0) {
-//         hits.push({ raw: compact(block), num });
-//       }
-//     }
-//   }
+async function parseVillagePage(villageUrl: string): Promise<Stay[]> {
+  const html = await fetchHTML(villageUrl);
+  const $ = cheerio.load(html);
 
-//   // 4) Decide which price to return
-//   // Heuristic: prefer the *smallest* positive price (usually "mulai dari"),
-//   // fallback to the first hit.
-//   if (hits.length) {
-//     const best = hits.reduce((a, b) => (b.num > 0 && b.num < a.num ? b : a), hits[0]);
-//     return { price_raw: best.raw, price_rp_numeric: best.num };
-//   }
+  // Find homestay links: any anchor containing "/homestay/"
+  const links = new Set<string>();
+  $("a[href]").each((_, a) => {
+    const href = $(a).attr("href") || "";
+    if (/\/homestay\//i.test(href)) links.add(absolutize(href, villageUrl));
+  });
 
-//   // 5) Final fallback — nothing found
-//   return { price_raw: "", price_rp_numeric: 0 };
-// };
+  // Also scan cards/tiles that might link via child <a>
+  $(".homestay, .card, article, .content, .list-group a").each((_, el) => {
+    const a = $(el).find("a[href]").first();
+    const href = a.attr("href");
+    if (href && /\/homestay\//i.test(href)) links.add(absolutize(href, villageUrl));
+  });
 
-// async function scrapeHomestay(url: string) {
-//     const html = await fetchHtml(url);
-//     const $ = load(html);
-  
-//     // remove scripts/styles so text() doesn’t suck in JS garbage
-//     $("script,style,noscript,template").remove();
-  
-//     const name = extractName($);            // from the homestay page
-//     const images = extractImages($);        // from the homestay page
-//     const phones = extractPhones($);        // from the homestay page
-//     const address = extractAddress($);      // from the homestay page
-//     const { price_raw, price_rp_numeric } = extractPrice($);
-  
-//     return {
-//       name,
-//       url,
-//       address,
-//       price_raw,
-//       price_rp_numeric,
-//       phone_primary: phones[0] || "",
-//       all_phones: phones.join(";"),
-//       image_primary: images[0] || "",
-//       all_images: images.join(";"),
-//     };
-//   }
-  
+  const stays: Stay[] = [];
 
-//   export async function getHomestays() {
-//     const homestayLinks = new Set<string>();
-  
-//     for (const desa of DESA_URLS) {
-//       console.log("[desa] fetching:", desa);
-//       const html = await fetchHtml(desa);
-//       const found = extractHomestayLinks(html);
-//       found.forEach((u) => homestayLinks.add(u));
-//       await sleep(400); // be polite
-//     }
-  
-//     const links = Array.from(homestayLinks).sort();
-//     console.log("[links]", links.length);
-  
-//     // optional: small concurrency to speed up but avoid hammering
-//     const CONC = 3;
-//     const items: any[] = [];
-//     let i = 0;
-  
-//     while (i < links.length) {
-//       const batch = links.slice(i, i + CONC);
-//       const results = await Promise.all(
-//         batch.map(async (u) => {
-//           try {
-//             console.log("[homestay] →", u);
-//             const item = await scrapeHomestay(u);
-//             return item;
-//           } catch (e: any) {
-//             console.error("[homestay error]", u, e?.message || e);
-//             return null;
-//           }
-//         })
-//       );
-//       results.forEach((r) => r && items.push(r));
-//       i += CONC;
-//       await sleep(400);
-//     }
-  
-//     return { count: items.length, items };
-//   }
-  
+  for (const detailUrl of links) {
+    const partial = await parseDetailPage(detailUrl);
 
-//   export async function GET() {
-//     try {
-//       const data = await getHomestays();
-//       return NextResponse.json(data);
-//     } catch (e: any) {
-//       return NextResponse.json({ error: e?.message || "error" }, { status: 500 });
-//     }
-//   }
+    // Infer name from slug if needed
+    const inferredName =
+      decodeURIComponent(detailUrl)
+        .split("/")
+        .pop()
+        ?.replace(/[_-]+/g, " ")
+        .replace(/\b\w/g, (c) => c.toUpperCase()) || null;
 
+    stays.push({
+      name: (partial.name || inferredName || "(Unnamed)").trim(),
+      address: partial.address ?? null,
+      price: partial.price ?? null,
+      phone: partial.phone ?? null,
+      link: detailUrl,
+      sourceUrl: villageUrl,
+      lat: (partial as any).lat ?? null,
+      lng: (partial as any).lng ?? null,
+    });
 
+    await sleep(120); // be polite
+  }
+
+  return stays;
+}
+
+function dedupeByNameAddress(items: Stay[]): Stay[] {
+  const map = new Map<string, Stay>();
+  for (const s of items) {
+    const key = `${s.name.toLowerCase()}|${(s.address || "").toLowerCase()}`;
+    if (!map.has(key)) map.set(key, s);
+    else {
+      const prev = map.get(key)!;
+      map.set(key, {
+        ...prev,
+        address: s.address || prev.address,
+        price: s.price || prev.price,
+        phone: s.phone || prev.phone,
+        link: s.link || prev.link,
+        lat: s.lat ?? prev.lat ?? null,
+        lng: s.lng ?? prev.lng ?? null,
+      });
+    }
+  }
+  return [...map.values()];
+}
+
+export async function GET(req: NextRequest) {
+  try {
+    const url = new URL(req.url);
+    const list = url.searchParams.get("urls");
+    const urls = list ? list.split(",").map((u) => u.trim()).filter(Boolean) : [];
+    if (urls.length === 0) {
+      return new Response(
+        JSON.stringify({ error: "Provide ?urls=comma,separated,urls" }, null, 2),
+        { status: 400, headers: { "content-type": "application/json" } }
+      );
+    }
+
+    const all: Stay[] = [];
+    for (const u of urls) {
+      const stays = await parseVillagePage(u);
+      all.push(...stays);
+      await sleep(200);
+    }
+
+    const final = dedupeByNameAddress(all);
+    return new Response(JSON.stringify(final, null, 2), {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    });
+  } catch (e: any) {
+    return new Response(JSON.stringify({ error: e?.message || String(e) }, null, 2), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
+  }
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const body = await req.json().catch(() => ({}));
+    const parsed = InputSchema.safeParse(body);
+    if (!parsed.success) {
+      return new Response(JSON.stringify({ error: parsed.error.flatten() }, null, 2), {
+        status: 400,
+        headers: { "content-type": "application/json" },
+      });
+    }
+
+    const { urls } = parsed.data;
+    const all: Stay[] = [];
+    for (const u of urls) {
+      const stays = await parseVillagePage(u);
+      all.push(...stays);
+      await sleep(200);
+    }
+
+    const final = dedupeByNameAddress(all);
+    return new Response(JSON.stringify(final, null, 2), {
+      headers: {
+        "content-type": "application/json; charset=utf-8",
+        "cache-control": "no-store",
+      },
+    });
+  } catch (e: any) {
+    return new Response(JSON.stringify({ error: e?.message || String(e) }, null, 2), {
+      status: 500,
+      headers: { "content-type": "application/json" },
+    });
+  }
+}

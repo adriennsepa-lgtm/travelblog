@@ -1,21 +1,4 @@
-// Install first:
-//   npm i react-leaflet leaflet react-leaflet-cluster
-// Add to your global CSS (e.g., app/globals.css) or in <head> via layout.tsx:
-//   import 'leaflet/dist/leaflet.css'
 
-// app/layout.tsx — include Leaflet CSS once for the whole app
-// export default function RootLayout({ children }: { children: React.ReactNode }) {
-//   return (
-//     <html lang="en">
-//       <head />
-//       <body className="min-h-screen">
-//         {children}
-//       </body>
-//     </html>
-//   )
-// }
-
-// app/components/HotelMap.tsx
 "use client";
 
 import { useEffect } from "react";
@@ -104,7 +87,22 @@ export function FlyTo({ lat, lng }: { lat: number; lng: number }) {
   return null;
 }
 
+
+const res = await fetch(
+  "http://localhost:3000/api/jadesta?urls=" + [
+    "https://jadesta.kemenparekraf.go.id/desa/bohesilian_1",
+    "https://jadesta.kemenparekraf.go.id/desa/payungpayung",
+    "https://jadesta.kemenparekraf.go.id/desa/teluk_harapan",
+    "https://jadesta.kemenparekraf.go.id/desa/_teluk_alulu_maratua",
+  ].join(","),
+  { cache: "no-store" }
+);
+const stays = await res.json();
+
+console.log(stays, "stayss");
+
 export default function HotelMap({
+
   hotels = SAMPLE_HOTELS,
   center = { lat: 2.21, lng: 118.60 },
   zoom = 11,

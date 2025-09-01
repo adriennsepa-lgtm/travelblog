@@ -35,7 +35,6 @@
 // }
 
 import Image from "next/image";
-import MaratuaMap from "../components/MaratuaMap";
 import VisitBlogSection from "../components/VisitBeachesSection";
 import CavesSection from "../components/VisitCavesSection";
 import VisitOtherIslandsSection from "../components/VisitOtherIslandsSection";
@@ -84,7 +83,7 @@ export default function TravelBlogLanding() {
       <section className="mx-auto max-w-6xl gap-8 px-4 pb-10 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div className="relative h-56 w-full overflow-hidden rounded-lg border border-neutral-200 sm:h-72">
-            <MaratuaMap />
+            <HotelMap />
           </div>
           <article className="space-y-3">
             <h2 className="text-2xl font-semibold">Where to stay</h2>
