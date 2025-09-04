@@ -34,6 +34,11 @@
 //   );
 // }
 
+
+
+
+
+
 import Image from "next/image";
 import VisitBlogSection from "../components/VisitBeachesSection";
 import CavesSection from "../components/VisitCavesSection";
@@ -41,16 +46,30 @@ import VisitOtherIslandsSection from "../components/VisitOtherIslandsSection";
 import 'leaflet/dist/leaflet.css';
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import HotelMap from "../components/MaratuaMap";
+import MaratuaMap from "../components/MaratuaMap";
+
 
 // Note: you can use local images too with next/image
+
+
+// app/page.tsx (Server Component)
+import type { Stay } from "@/lib/stays/types";
+
+
+
+
+
+
 
 
 // Drop your images in /public and update the constants below
 const MAINIMAGE = "/maratua/lumantangbeach.png"
 
 
-export default function TravelBlogLanding() {
+
+
+export default async function TravelBlogLanding() {
+
   return (
     <main className="min-h-screen bg-white text-neutral-900">
       <section className="relative">
@@ -76,14 +95,13 @@ export default function TravelBlogLanding() {
           </article>
 
           <div className="relative h-56 w-full overflow-hidden rounded-lg border border-neutral-200 sm:h-72">
-            <HotelMap />
           </div>
         </div>
       </section>
       <section className="mx-auto max-w-6xl gap-8 px-4 pb-10 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 gap-8 md:grid-cols-2">
           <div className="relative h-56 w-full overflow-hidden rounded-lg border border-neutral-200 sm:h-72">
-            <HotelMap />
+           <MaratuaMap />
           </div>
           <article className="space-y-3">
             <h2 className="text-2xl font-semibold">Where to stay</h2>

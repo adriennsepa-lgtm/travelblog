@@ -1,7 +1,7 @@
 // app/components/VisitBlogSection.tsx
 import Image from "next/image";
 
-const LUMANTANGBEACH = "/maratua/lumantangbeach.png";
+const LUMANTANGBEACH = "/images/lumantangbeach.png";
 
 
 // VisitBlogSection: A section with a collage of images and text encouraging users to visit the blog

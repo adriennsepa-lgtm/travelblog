@@ -1,5 +1,6 @@
 // app/components/VisitOtherIslandsSection.tsx
 import Image from "next/image";
+const TABUNGCAVE =  "/images/goahalotabung.png";
 
 export default function VisitOtherIslandsSection() {
   return (
@@ -33,7 +34,7 @@ export default function VisitOtherIslandsSection() {
             <figure className="overflow-hidden rounded-xl shadow">
               <div className="relative aspect-[16/9] w-full">
                 <Image
-                  src="/photos/other-hero.jpg"
+                  src={TABUNGCAVE}
                   alt="Island lagoon"
                   fill
                   className="object-cover"
@@ -43,7 +44,7 @@ export default function VisitOtherIslandsSection() {
             <figure className="overflow-hidden rounded-xl shadow">
               <div className="relative aspect-[16/9] w-full">
                 <Image
-                  src="/photos/other-1.jpg"
+                  src={TABUNGCAVE}
                   alt="Kakaban reef"
                   fill
                   className="object-cover"
@@ -57,7 +58,7 @@ export default function VisitOtherIslandsSection() {
             <figure className="overflow-hidden rounded-xl shadow">
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src="/photos/other-2.jpg"
+                  src={TABUNGCAVE}
                   alt="Sangalaki manta ray"
                   fill
                   className="object-cover"
@@ -67,7 +68,7 @@ export default function VisitOtherIslandsSection() {
             <figure className="overflow-hidden rounded-xl shadow">
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src="/photos/other-3.jpg"
+                  src={TABUNGCAVE}
                   alt="Derawan pier"
                   fill
                   className="object-cover"
@@ -77,7 +78,7 @@ export default function VisitOtherIslandsSection() {
             <figure className="overflow-hidden rounded-xl shadow">
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src="/photos/other-4.jpg"
+                  src={TABUNGCAVE}
                   alt="Hidden island cave"
                   fill
                   className="object-cover"

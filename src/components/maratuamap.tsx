@@ -2,10 +2,13 @@
 "use client";
 
 import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker, Popup, useMap } from "react-leaflet";
-import MarkerClusterGroup from 'react-leaflet-markercluster';
+import { MapContainer, TileLayer, Marker,  useMap, Tooltip } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
+
+
+
+
 
 L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
@@ -13,7 +16,6 @@ L.Icon.Default.mergeOptions({
   shadowUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png",
 });
 
-// Optional clustering. If you prefer no clustering, remove this import and the <MarkerClusterGroup> wrapper.
 
 // Fix default marker icons in Leaflet with bundlers
 // You can also place the images locally if you want offline builds
@@ -32,51 +34,26 @@ const DefaultIcon = new L.Icon({
 L.Marker.prototype.options.icon = DefaultIcon as any;
 
 // Types
-export type HotelPin = {
+ type HotelPin = {
   id: string;
   name: string;
   lat: number;
   lng: number;
-  url?: string; // link to your blog post or external site
-  price?: string; // optional string so you can show a range or currency
-  rating?: number; // 0..5
-  image?: string; // thumbnail URL if available
+  url?: string; 
+  price?: string; 
+  rating?: number; 
+  image?: string; 
   tags?: string[];
 };
 
-// Example data. Replace with data from your CMS or Markdown frontmatter.
-const SAMPLE_HOTELS: HotelPin[] = [
-  {
-    id: "1",
-    name: "Bajo Homestay",
-    lat: 2.2126,
-    lng: 118.605,
-    url: "/blog/bajo-homestay",
-    price: "$25–35",
-    rating: 4.6,
-    tags: ["beach", "quiet"],
-  },
-  {
-    id: "2",
-    name: "Kakaban Lodge",
-    lat: 2.183,
-    lng: 118.55,
-    url: "/blog/kakaban-lodge",
-    price: "$60–80",
-    rating: 4.4,
-    tags: ["snorkeling"],
-  },
-  {
-    id: "3",
-    name: "Maratua Bay Bungalows",
-    lat: 2.234,
-    lng: 118.615,
-    url: "/blog/maratua-bay",
-    price: "$40–55",
-    rating: 4.7,
-    tags: ["sunset", "wifi"],
-  },
-];
+type AccomodationMapProps = {
+  hotels?: HotelPin[];
+  center?: { lat: number; lng: number };
+  zoom?: number;
+  height?: number;
+};
+
+
 
 // Optional control to move the map when user selects a hotel from outside
 export function FlyTo({ lat, lng }: { lat: number; lng: number }) {
@@ -99,22 +76,17 @@ const res = await fetch(
 );
 const stays = await res.json();
 
-console.log(stays, "stayss");
+console.log(stays,"jadesta stays" );
 
-export default function HotelMap({
+export default function AccomodationMap({
 
-  hotels = SAMPLE_HOTELS,
+  hotels = stays,
   center = { lat: 2.21, lng: 118.60 },
   zoom = 11,
   height = 480,
-}: {
-  hotels?: HotelPin[];
-  center?: { lat: number; lng: number };
-  zoom?: number;
-  height?: number;
-}) {
+}: AccomodationMapProps) {
   return (
-    <div className="w-full rounded-2xl overflow-hidden shadow">
+    <div className="w-full overflow-hidden shadow">
       <MapContainer
         center={[center.lat, center.lng]}
         zoom={zoom}
@@ -128,20 +100,13 @@ export default function HotelMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-        {/* Cluster many markers cleanly. Remove wrapper if you dislike clustering. */}
-        <MarkerClusterGroup chunkedLoading>
           {hotels.map((h) => (
             <Marker key={h.id} position={[h.lat, h.lng]}>
-              <Popup>
+
+              <Tooltip>
                 <div className="space-y-1">
                   <div className="font-semibold">{h.name}</div>
-                  {h.price && <div className="text-sm">{h.price}</div>}
-                  {typeof h.rating === "number" && (
-                    <div className="text-sm">Rating: {h.rating.toFixed(1)}/5</div>
-                  )}
-                  {h.tags && h.tags.length > 0 && (
-                    <div className="text-xs opacity-80">{h.tags.join(" · ")}</div>
-                  )}
+                  {h.price && <div className="text-sm">Price: ~ {h.price}</div>}
                   {h.url && (
                     <a
                       href={h.url}
@@ -151,10 +116,9 @@ export default function HotelMap({
                     </a>
                   )}
                 </div>
-              </Popup>
+                </Tooltip>
             </Marker>
           ))}
-        </MarkerClusterGroup>
       </MapContainer>
     </div>
   );
@@ -162,12 +126,12 @@ export default function HotelMap({
 
 // app/map/page.tsx — example page to render the map
 // import dynamic from "next/dynamic";
-// const DynamicHotelMap = dynamic(() => import("../components/HotelMap"), { ssr: false });
+// const DynamicAccomodationMap = dynamic(() => import("../components/AccomodationMap"), { ssr: false });
 // export default function MapPage() {
 //   return (
 //     <main className="mx-auto max-w-4xl p-6 space-y-6">
 //       <h1 className="text-2xl font-bold">Hotel Map</h1>
-//       <DynamicHotelMap />
+//       <DynamicAccomodationMap />
 //     </main>
 //   );
 // }
@@ -182,7 +146,7 @@ export default function HotelMap({
 // rating: 4.7
 // tags: ["sunset", "wifi"]
 // ---
-// Then pass those into <HotelMap hotels={hotelsFromContent} />
+// Then pass those into <AccomodationMap hotels={hotelsFromContent} />
 
 // Styling notes:
 // - Wrap the map in a responsive container

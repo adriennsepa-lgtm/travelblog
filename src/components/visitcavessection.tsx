@@ -1,8 +1,8 @@
 // app/components/CavesSection.tsx
 import Image from "next/image";
-const TABUNGCAVE =  "/maratua/goahalotabung.png";
+const TABUNGCAVE =  "/images/goahalotabung.png";
 
-export default function CavesSection() {
+ const CavesSection = () => {
   return (
     <section className="w-full bg-[#f2efe9]">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-12 px-6 py-20 md:grid-cols-2">
@@ -58,3 +58,5 @@ export default function CavesSection() {
     </section>
   );
 }
+
+export default CavesSection;
