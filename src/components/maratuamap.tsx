@@ -101,7 +101,7 @@ export default function AccomodationMap({
         />
 
           {hotels.map((h) => (
-            <Marker key={h.id} position={[h.lat, h.lng]}>
+            <Marker key={h.name} position={[h.lat, h.lng]}>
 
               <Tooltip>
                 <div className="space-y-1">

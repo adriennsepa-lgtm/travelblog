@@ -2,6 +2,7 @@ import { NextRequest } from "next/server";
 import { dedupeByNameAddress } from "@/lib/stays/utils";
 import { scrapeJadestaVillage } from "@/lib/stays/jadesta";
 import { fetchGooglePlacesCached } from "@/lib/stays/google_places";
+import {Stay} from '../../../lib/stays/types'
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -13,6 +14,42 @@ function parseUrls(req: NextRequest): string[] {
   return list.split(",").map(s => s.trim()).filter(Boolean);
 }
 
+const uniqueStaysList = (
+  fetchedJadestaStays: Stay[],
+  googleMapsStays: Stay[]
+): Stay[] => {
+  // helper: normalize names for loose comparison
+  const normalizeName = (name: string) =>
+    name
+      .toLowerCase()
+      .replace(/\b(home\s*stay|homestay|resort|maratua)\b/g, "") // remove filler words
+      .replace(/\s+/g, " ") // collapse spaces
+      .trim();
+
+  const mergedStays = [...googleMapsStays, ...fetchedJadestaStays];
+
+  return mergedStays.reduce<Stay[]>((acc, curr) => {
+    const normCurr = normalizeName(curr.name);
+
+    const existing = acc.find(
+      (a) => normalizeName(a.name) === normCurr
+    );
+
+    if (existing) {
+      // merge: prefer non-null values from curr
+      for (const key of Object.keys(curr) as (keyof Stay)[]) {
+        if (curr[key] != null) {
+          (existing as any)[key] = curr[key];
+        }
+      }
+      return acc;
+    }
+
+    return [...acc, { ...curr }];
+  }, []);
+};
+
+
 export async function GET(req: NextRequest) {
   const urls = parseUrls(req);
   if (urls.length === 0) {
@@ -20,19 +57,18 @@ export async function GET(req: NextRequest) {
       { status: 400, headers: { "content-type": "application/json" } });
   }
 
-  const all: any[] = [];
-  for (const u of urls) {
-    const stays = await scrapeJadestaVillage(u);
-    // console.log(stays, "ez pedig jadesta stays"); 
+  
+  const jadestaStays = (
+    await Promise.all(urls.map((u) => scrapeJadestaVillage(u)))
+  ).flat();
 
-    // all.push(...stays);
-  }
 
-  const google = await fetchGooglePlacesCached();
-  console.log(google, "googleee staysss"); 
-  all.push(...google);
+  const googleStays = await fetchGooglePlacesCached();
+  const filteredStays: Stay[] = uniqueStaysList(jadestaStays, googleStays);
+ 
+  console.log(filteredStays, "filtered stays");
 
-  const final = dedupeByNameAddress(all);
+  const final = dedupeByNameAddress(filteredStays);
   return new Response(JSON.stringify(final, null, 2), {
     headers: { "content-type": "application/json; charset=utf-8", "cache-control": "no-store" },
   });

@@ -1,10 +1,10 @@
 // app/components/VisitOtherIslandsSection.tsx
 import Image from "next/image";
-const TABUNGCAVE =  "/images/goahalotabung.png";
+const TABUNGCAVE =  "/images/halo_tabung_cave.png";
 
 export default function VisitOtherIslandsSection() {
   return (
-    <section className="w-full bg-[#f6f3ee]">
+    <section className="w-full">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-12 px-6 py-20 md:grid-cols-2">
         {/* LEFT: text (1/2) */}
         <div>

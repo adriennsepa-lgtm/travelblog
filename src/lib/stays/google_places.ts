@@ -1,11 +1,10 @@
-import fs from "node:fs/promises";
-import path from "node:path";
+
 import type { Stay } from "./types";
+import { readCache, writeCache } from "../cache";
 
 const CENTER = { lat: 2.2333, lng: 118.6000 };
 const RADIUS_M = 15000;
-const CACHE_MAX_AGE_MS = 30 * 24 * 60 * 60 * 1000; // 30 days
-const CACHE_FILE = path.join(process.cwd(), "tmp-cache", "places-maratua.json");
+
 // On Vercel, you can switch to "/tmp/places-maratua.json" if you prefer
 // const CACHE_FILE = "/tmp/places-maratua.json";
 
@@ -17,7 +16,6 @@ type NearbyResult = {
   price_level?: number;
 };
 
-type CacheShape = { cachedAt: number; data: Stay[] };
 
 export async function fetchGooglePlacesCached(opts?: { force?: boolean }) {
   if (!opts?.force) {
@@ -93,24 +91,6 @@ async function fetchGooglePlacesFresh(): Promise<Stay[]> {
   return basics;
 }
 
-async function readCache(): Promise<CacheShape | null> {
-  try {
-    // ensure folder exists
-    await fs.mkdir(path.dirname(CACHE_FILE), { recursive: true });
-    const raw = await fs.readFile(CACHE_FILE, "utf8");
-    const parsed = JSON.parse(raw) as CacheShape;
-    if (Date.now() - parsed.cachedAt <= CACHE_MAX_AGE_MS) return parsed;
-    return null;
-  } catch {
-    return null;
-  }
-}
-
-async function writeCache(data: Stay[]): Promise<void> {
-  await fs.mkdir(path.dirname(CACHE_FILE), { recursive: true });
-  const payload: CacheShape = { cachedAt: Date.now(), data };
-  await fs.writeFile(CACHE_FILE, JSON.stringify(payload), "utf8");
-}
 
 /* If you want details (phone/website), uncomment and call it above.
 

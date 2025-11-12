@@ -1,43 +1,38 @@
 // app/components/CavesSection.tsx
 import Image from "next/image";
-const TABUNGCAVE =  "/images/goahalotabung.png";
+const TABUNGCAVE =  "/images/halo_tabung_cave.png";
+const GUMANTUNG_CAVE =  "/images/gumantung_cave.png";
 
  const CavesSection = () => {
   return (
     <section className="w-full bg-[#f2efe9]">
       <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-12 px-6 py-20 md:grid-cols-2">
-        <div>
-          <div className="grid grid-cols-2 gap-6">
-            <figure className="overflow-hidden rounded-xl shadow">
-              <div className="relative aspect-[3/4]">
+          <div className="relative w-[520px] h-[390px]">
+              <div >
                 <Image
                   src={TABUNGCAVE}
                   alt="Inside the limestone cave"
                   fill
-                  className="object-cover"
+                  className="object-cover rounded-[2px] shadow"
                   sizes="(min-width: 768px) 25vw, 100vw"
                 />
+                <h5 className="italic text-gray-500 text-center text-sm leading-7">Pratasaba beach</h5>
               </div>
-            </figure>
+
             
-            <figure className="overflow-hidden rounded-xl shadow">
-              <div className="relative aspect-[3/4]">
+              <div>
                 <Image
-                  src={TABUNGCAVE}
+                  src={GUMANTUNG_CAVE}
                   alt="Cave opening to the sea"
                   fill
                   className="object-cover"
                   sizes="(min-width: 768px) 25vw, 100vw"
                 />
+                              <h5 className="italic text-gray-500 text-center text-sm leading-7">Pratasaba beach</h5>
+
               </div>
-            </figure>
-            <h3 className="mt-6 text-lg font-semibold text-neutral-900 text-center">
-            Maratua Caves
-          </h3>
           </div>
           
-        </div>
-
         {/* RIGHT: text (1/2 width) */}
         <div>
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">
