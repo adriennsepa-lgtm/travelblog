@@ -1,6 +1,9 @@
 // app/components/VisitOtherIslandsSection.tsx
 import Image from "next/image";
-const TABUNGCAVE =  "/images/halo_tabung_cave.png";
+const KAKABAN =  "/images/kakaban.png";
+const SANGALAKI_TURTLE =  "/images/sangalaki_baby_turtle.jpg";
+const SANGALAKI_TURTLE_2 =  "/images/sangalaki_baby_turtle_2.jpg";
+
 
 export default function VisitOtherIslandsSection() {
   return (
@@ -25,21 +28,21 @@ export default function VisitOtherIslandsSection() {
         <div>
           {/* Row 1: two horizontals */}
           <div className="grid grid-cols-2 gap-4 mb-4">
-            <figure className="overflow-hidden rounded-xl shadow">
+            <figure className="overflow-hidden shadow">
               <div className="relative aspect-[16/9] w-full">
                 <Image
-                  src={TABUNGCAVE}
+                  src={KAKABAN}
                   alt="Island lagoon"
                   fill
                   className="object-cover"
                 />
               </div>
             </figure>
-            <figure className="overflow-hidden rounded-xl shadow">
+            <figure className="overflow-hidden shadow">
               <div className="relative aspect-[16/9] w-full">
                 <Image
-                  src={TABUNGCAVE}
-                  alt="Kakaban reef"
+                  src={SANGALAKI_TURTLE}
+                  alt="Kakaban jellyfish lake"
                   fill
                   className="object-cover"
                 />
@@ -49,20 +52,20 @@ export default function VisitOtherIslandsSection() {
 
           {/* Row 2: three verticals */}
           <div className="grid grid-cols-3 gap-4">
-            <figure className="overflow-hidden rounded-xl shadow">
+            <figure className="overflow-hidden shadow">
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src={TABUNGCAVE}
+                  src={SANGALAKI_TURTLE}
                   alt="Sangalaki manta ray"
                   fill
                   className="object-cover"
                 />
               </div>
             </figure>
-            <figure className="overflow-hidden rounded-xl shadow">
+            <figure className="overflow-hidden shadow">
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src={TABUNGCAVE}
+                  src={SANGALAKI_TURTLE_2}
                   alt="Derawan pier"
                   fill
                   className="object-cover"
@@ -72,7 +75,7 @@ export default function VisitOtherIslandsSection() {
             <figure className="overflow-hidden rounded-xl shadow">
               <div className="relative aspect-[3/4] w-full">
                 <Image
-                  src={TABUNGCAVE}
+                  src={SANGALAKI_TURTLE}
                   alt="Hidden island cave"
                   fill
                   className="object-cover"

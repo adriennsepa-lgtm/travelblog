@@ -18,7 +18,7 @@ const GUMANTUNG_CAVE =  "/images/gumantung_cave.png";
                   sizes="(min-width: 768px) 25vw, 100vw"
                 />
               </div>
-              <h5 className="italic text-gray-500 text-center text-sm leading-7">Cavee something beach</h5>
+              <h5 className="italic text-gray-500 text-center text-sm leading-7">Goa Halo Tabung</h5>
 
               </div>
 
@@ -34,7 +34,8 @@ const GUMANTUNG_CAVE =  "/images/gumantung_cave.png";
                 />
 
               </div>
-              <h5 className="italic text-gray-500 text-center text-sm leading-7">Pratasaba beach</h5>
+              <h5 className="italic text-gray-500 text-center text-sm leading-7">Goa Gumantung
+              </h5>
 
               </div>
           </div>

@@ -11,7 +11,7 @@ import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
 import dynamic from "next/dynamic";
 
-const AccomodationMap = dynamic(() => import("../components/AccomodationMap"), {
+const AccomodationMap = dynamic(() => import("../components/MaratuaMap"), {
   ssr: false, // leaflet doesn't like SSR anyway
   loading: () => <p>Loading map…</p>
 });
