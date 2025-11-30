@@ -40,7 +40,6 @@ const GUMANTUNG_CAVE =  "/images/gumantung_cave.png";
               </div>
           </div>
           
-        {/* RIGHT: text (1/2 width) */}
         <div>
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">
             Explore Maratua's Caves
