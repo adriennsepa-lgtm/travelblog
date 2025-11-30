@@ -10,6 +10,7 @@ import "leaflet/dist/leaflet.css";
 
 
 
+
 L.Icon.Default.mergeOptions({
   iconUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png",
   iconRetinaUrl: "https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png",
@@ -123,37 +124,3 @@ export default function AccomodationMap({
     </div>
   );
 }
-
-// app/map/page.tsx — example page to render the map
-// import dynamic from "next/dynamic";
-// const DynamicAccomodationMap = dynamic(() => import("../components/AccomodationMap"), { ssr: false });
-// export default function MapPage() {
-//   return (
-//     <main className="mx-auto max-w-4xl p-6 space-y-6">
-//       <h1 className="text-2xl font-bold">Hotel Map</h1>
-//       <DynamicAccomodationMap />
-//     </main>
-//   );
-// }
-
-// MDX integration idea:
-// If each blog post has frontmatter with coords, generate a hotels[] array at build time.
-// Example frontmatter:
-// ---
-// title: "Maratua Bay Bungalows"
-// coords: { lat: 2.234, lng: 118.615 }
-// price: "$40–55"
-// rating: 4.7
-// tags: ["sunset", "wifi"]
-// ---
-// Then pass those into <AccomodationMap hotels={hotelsFromContent} />
-
-// Styling notes:
-// - Wrap the map in a responsive container
-// - Control height prop per breakpoint
-// - For dark mode tiles, swap TileLayer url for a dark tile provider
-
-// Performance notes:
-// - Use { ssr: false } when dynamically importing the map component in Next.js to avoid window/DOM errors
-// - For many markers, keep clustering on, and consider server-side filtering by viewport bounds
-// - If you expect heavy traffic, use a proper tile provider or self-host tiles instead of public OSM tiles

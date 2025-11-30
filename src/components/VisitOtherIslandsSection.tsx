@@ -9,7 +9,7 @@ export default function VisitOtherIslandsSection() {
         {/* LEFT: text (1/2) */}
         <div>
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">
-            Visit <em className="not-italic font-serif italic">Other Islands</em>
+           Visit Other Islands
           </h2>
           <p className="mt-4 text-neutral-700">
             Maratua’s neighbors are wild and worth it. Hop across to Kakaban for
@@ -19,12 +19,6 @@ export default function VisitOtherIslandsSection() {
             Short boat rides, big payoffs. Plan a day trip or build a mini-loop.
           </p>
 
-          <a
-            href="/blog/other-islands"
-            className="mt-6 inline-flex items-center justify-center rounded-full bg-neutral-900 px-5 py-2.5 text-sm font-medium text-white shadow hover:opacity-90"
-          >
-            SEE THE ISLAND HOP GUIDE
-          </a>
         </div>
 
         {/* RIGHT: collage (2 horizontals + 3 verticals) */}
@@ -85,12 +79,7 @@ export default function VisitOtherIslandsSection() {
                 />
               </div>
             </figure>
-          </div>
-
-          {/* Title under collage */}
-          <h3 className="mt-8 text-center text-xl font-semibold text-neutral-900">
-            Island Hop Collage
-          </h3>
+          </div>          
         </div>
       </div>
     </section>

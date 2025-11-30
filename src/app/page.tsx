@@ -1,11 +1,21 @@
+"use client";
+
 import Image from "next/image";
 import VisitBeachesSection from "../components/VisitBeachesSection";
 import CavesSection from "../components/VisitCavesSection";
+import DivingSnorkelingSection from "../components/DivingSnorkelingSection";
+import OtherActivitiesSection from "../components/OtherActivitiesSection";
 import VisitOtherIslandsSection from "../components/VisitOtherIslandsSection";
 import "leaflet/dist/leaflet.css";
 import "leaflet.markercluster/dist/MarkerCluster.css";
 import "leaflet.markercluster/dist/MarkerCluster.Default.css";
-import MaratuaMap from "../components/MaratuaMap";
+import dynamic from "next/dynamic";
+
+const AccomodationMap = dynamic(() => import("../components/AccomodationMap"), {
+  ssr: false, // leaflet doesn't like SSR anyway
+  loading: () => <p>Loading map…</p>
+});
+
 
 // Note: you can use local images too with next/image
 
@@ -135,7 +145,7 @@ export default async function TravelBlogLanding() {
       <section className="mx-auto  bg-[#f2efe9] gap-8 px-4 pb-10 sm:px-6 lg:px-8">
         <div className="mx-auto grid max-w-6xl grid-cols-1 items-start gap-12 px-6 py-20 md:grid-cols-2">
           <div className="relative h-56 w-full overflow-hidden rounded-lg border border-neutral-200 sm:h-72">
-            <MaratuaMap />
+            <AccomodationMap />
           </div>
           <article className="space-y-3">
             <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">Where to stay</h2>
@@ -159,6 +169,8 @@ export default async function TravelBlogLanding() {
       {/* Features list */}
       <VisitBeachesSection />
       <CavesSection />
+      <DivingSnorkelingSection />
+      <OtherActivitiesSection />
       <VisitOtherIslandsSection />
 
       {/* Footer */}
