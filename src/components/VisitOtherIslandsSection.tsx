@@ -1,8 +1,8 @@
 // app/components/VisitOtherIslandsSection.tsx
 import Image from "next/image";
-const KAKABAN =  "/images/kakaban.png";
-const SANGALAKI_TURTLE =  "/images/sangalaki_baby_turtle.jpg";
-const SANGALAKI_TURTLE_2 =  "/images/sangalaki_baby_turtle_2.jpg";
+const KAKABAN = "/images/kakaban.webp";
+const SANGALAKI_TURTLE = "/images/sangalaki_baby_turtle.webp";
+const SANGALAKI_TURTLE_2 = "/images/sangalaki_baby_turtle_2.webp";
 
 
 export default function VisitOtherIslandsSection() {
@@ -12,11 +12,14 @@ export default function VisitOtherIslandsSection() {
         {/* LEFT: text (1/2) */}
         <div>
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">
-           Visit Other Islands
+            Visit Other Islands
           </h2>
           <p className="mt-4 text-neutral-700">
-            Maratua’s neighbors are wild and worth it. Hop across to Kakaban for
-            jellyfish lakes, Sangalaki for manta runs, and Derawan for calm, easy days.
+            Around Maratua, there are a number of other islands to visit. We visit Kakaban, Sangalaki.
+            Kakaban is known for its large jellyfish lake with millions of stringless jellyfish. Snorkeling here was
+            just an unforgettable experience.
+            Sangalaki is home to baby turtles and manta rays. We did not see manta rays during snorkeling but we did see
+            baby turtles. The conservation center does an incredible work of protecting the turtles and helping with hatching.
           </p>
           <p className="mt-4 text-neutral-700">
             Short boat rides, big payoffs. Plan a day trip or build a mini-loop.
@@ -82,7 +85,7 @@ export default function VisitOtherIslandsSection() {
                 />
               </div>
             </figure>
-          </div>          
+          </div>
         </div>
       </div>
     </section>

@@ -23,12 +23,12 @@ const AccomodationMap = dynamic(() => import("../components/MaratuaMap"), {
 import type { Stay } from "@/lib/stays/types";
 
 // Drop your images in /public and update the constants below
-const MAINIMAGE = "/images/beach_with_palm_trees.png";
-const PLANE_MARATUA = "/images/maratua_plane.png";
-const DISSAPEARING_BEACH_HORIZONTAL = "/images/disappearing_beach_horizontal.png";
-const MARATUA_JETTY = "/images/jetty_maratua.png";
-const GRAGE_GUESTHOUSE = "/images/grage_guesthouse.jpg";
-const CAVE = "/images/cave_04.png";
+const MAINIMAGE = "/images/beach_with_palm_trees.webp";
+const PLANE_MARATUA = "/images/maratua_plane.webp";
+const DISSAPEARING_BEACH_HORIZONTAL = "/images/disappearing_beach_horizontal.webp";
+const MARATUA_JETTY = "/images/jetty_maratua.webp";
+const GRAGE_GUESTHOUSE = "/images/grage_guesthouse.webp";
+const CAVE = "/images/cave_04.webp";
 
 // font-family: 'Montserrat', 'Arial', sans-serif;
 // font-weight: 700;

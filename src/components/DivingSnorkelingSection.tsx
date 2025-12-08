@@ -1,7 +1,7 @@
 // app/components/VisitBeachesSection.tsx
 import Image from "next/image";
 
-const DIVING = "/images/diving_spots.png";
+const DIVING = "/images/diving_spots.webp";
 
 
 // VisitBeachesSection: A section with a collage of images and text encouraging users to visit the blog
