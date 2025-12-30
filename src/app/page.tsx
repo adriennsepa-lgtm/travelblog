@@ -35,7 +35,7 @@ const CAVE = "/images/cave_04.webp";
 // color: #FFFFFF;
 // letter-spacing: 0.01em;
 
-export default async function TravelBlogLanding() {
+export default function TravelBlogLanding() {
   return (
     <main className="min-h-screen bg-white text-neutral-900">
       <section className="relative">
@@ -74,40 +74,40 @@ export default async function TravelBlogLanding() {
             just a quiet escape.
           </p>
           <div className="relative flex flex-row items-center gap-2 mt-10">
-          <div className="relative w-full aspect-[3/3] overflow-hidden">
+            <div className="relative w-full aspect-[3/3] overflow-hidden">
 
-          <Image
-            src= {DISSAPEARING_BEACH_HORIZONTAL}
-            alt="Disappearing beach"
-            fill
-            className="object-cover"
-          />
-          </div>  
-                <div className="relative w-full aspect-[3/3] overflow-hidden">
-          <Image
-            src={MARATUA_JETTY}
-            alt="Maratua jetty"
-            fill
-            className="object-cover"
+              <Image
+                src={DISSAPEARING_BEACH_HORIZONTAL}
+                alt="Disappearing beach"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative w-full aspect-[3/3] overflow-hidden">
+              <Image
+                src={MARATUA_JETTY}
+                alt="Maratua jetty"
+                fill
+                className="object-cover"
 
-          />   
-          </div>
-                <div className="relative w-full aspect-[3/3] overflow-hidden"> 
-          <Image
-            src={GRAGE_GUESTHOUSE}
-            alt="Grage guesthouse"
-            fill
-            className="object-cover"
-          />
-          </div>
-                <div className="relative w-full aspect-[3/3] overflow-hidden">
-          <Image
-            src={CAVE}
-            alt="Cave on Maratua"
-            fill
-            className="object-cover"
-          />    
-          </div>  
+              />
+            </div>
+            <div className="relative w-full aspect-[3/3] overflow-hidden">
+              <Image
+                src={GRAGE_GUESTHOUSE}
+                alt="Grage guesthouse"
+                fill
+                className="object-cover"
+              />
+            </div>
+            <div className="relative w-full aspect-[3/3] overflow-hidden">
+              <Image
+                src={CAVE}
+                alt="Cave on Maratua"
+                fill
+                className="object-cover"
+              />
+            </div>
           </div>
         </div>
       </section>
@@ -175,21 +175,6 @@ export default async function TravelBlogLanding() {
 
       {/* Footer */}
       <footer className="border-t border-neutral-200">
-        <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
-          <div className="grid grid-cols-2 gap-4 text-sm text-neutral-500 sm:grid-cols-6">
-            <div className="col-span-2 font-medium text-neutral-900">
-              Site name
-            </div>
-            {Array.from({ length: 10 }).map((_, i) => (
-              <a key={i} href="#" className="hover:text-neutral-700">
-                Page
-              </a>
-            ))}
-          </div>
-          <div className="mt-6 flex items-center gap-4 text-neutral-400">
-            <span>© {new Date().getFullYear()} Your Name</span>
-          </div>
-        </div>
       </footer>
     </main>
   );
