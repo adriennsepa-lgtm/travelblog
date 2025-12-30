@@ -77,8 +77,6 @@ const res = await fetch(
 );
 const stays = await res.json();
 
-console.log(stays, "jadesta stays");
-
 export default function AccomodationMap({
 
   hotels = stays,

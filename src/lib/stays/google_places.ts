@@ -23,7 +23,6 @@ export async function fetchGooglePlacesCached(opts?: { force?: boolean }) {
     if (cached) return cached.data;
   }
   const data = await fetchGooglePlacesFresh();
-  console.log(data, "data from google places");
   await writeCache(data);
   return data;
 }

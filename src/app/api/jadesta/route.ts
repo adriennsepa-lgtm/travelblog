@@ -2,7 +2,7 @@ import { NextRequest } from "next/server";
 import { dedupeByNameAddress } from "@/lib/stays/utils";
 import { scrapeJadestaVillage } from "@/lib/stays/jadesta";
 import { fetchGooglePlacesCached } from "@/lib/stays/google_places";
-import {Stay} from '../../../lib/stays/types'
+import { Stay } from '../../../lib/stays/types'
 
 export const dynamic = "force-dynamic";
 export const revalidate = 0;
@@ -57,7 +57,7 @@ export async function GET(req: NextRequest) {
       { status: 400, headers: { "content-type": "application/json" } });
   }
 
-  
+
   const jadestaStays = (
     await Promise.all(urls.map((u) => scrapeJadestaVillage(u)))
   ).flat();
@@ -65,8 +65,7 @@ export async function GET(req: NextRequest) {
 
   const googleStays = await fetchGooglePlacesCached();
   const filteredStays: Stay[] = uniqueStaysList(jadestaStays, googleStays);
- 
-  console.log(filteredStays, "filtered stays");
+
 
   const final = dedupeByNameAddress(filteredStays);
   return new Response(JSON.stringify(final, null, 2), {
