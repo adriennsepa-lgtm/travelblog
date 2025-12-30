@@ -34,7 +34,7 @@ const DivingSnorkelingSection = () => {
           </p>
         </div>
 
-        <div className="relative w-[520px] h-[390px]">
+        <div className="relative w-[520px] h-[450px]">
           <div className="flex gap-x-7">
             <div className="flex flex-col gap-y-1">
               <div>
