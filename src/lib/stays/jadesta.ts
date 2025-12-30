@@ -111,15 +111,15 @@ function parseLatLngFromUrl(raw: string) {
       const m = ll.match(/(-?\d+\.\d+),\s*(-?\d+\.\d+)/);
       if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
     }
-  } catch {}
+  } catch { }
   return null;
 }
 
-function parseLatLngFromText(t: string) {
-  const m = t.match(/(-?\d{1,2}\.\d{3,}),\s*(-?\d{1,3}\.\d{3,})/);
-  if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
-  return null;
-}
+// function parseLatLngFromText(t: string) {
+//   const m = t.match(/(-?\d{1,2}\.\d{3,}),\s*(-?\d{1,3}\.\d{3,})/);
+//   if (m) return { lat: parseFloat(m[1]), lng: parseFloat(m[2]) };
+//   return null;
+// }
 
 function normalizeAddress(raw: string): string {
   let s = raw.replace(/\s+/g, " ").trim();
@@ -172,18 +172,18 @@ async function geocodeAddress(address: string, apiKey: string) {
 const PLACE_CENTROIDS: Record<string, { lat: number; lng: number }> = {
   // tweak if you have better points
   "teluk harapan": { lat: 2.2788, lng: 118.5694 },
-  "teluk alulu":   { lat: 2.2790, lng: 118.6000 }, // ~5km E of Teluk Harapan (est.)
-  "bohesilian":    { lat: 2.2860, lng: 118.5450 },
+  "teluk alulu": { lat: 2.2790, lng: 118.6000 }, // ~5km E of Teluk Harapan (est.)
+  "bohesilian": { lat: 2.2860, lng: 118.5450 },
   "payung-payung": { lat: 2.2460, lng: 118.5220 },
-  "maratua":       { lat: 2.2700, lng: 118.6000 }, // island-wide fallback
+  "maratua": { lat: 2.2700, lng: 118.6000 }, // island-wide fallback
 };
 
 const aliases: Record<string, string[]> = {
   "teluk harapan": ["teluk harapan"],
-  "teluk alulu":   ["teluk alulu", "alulu"],
-  "bohesilian":    ["bohesilian", "bohe silian"],
+  "teluk alulu": ["teluk alulu", "alulu"],
+  "bohesilian": ["bohesilian", "bohe silian"],
   "payung-payung": ["payung-payung", "payung payung"],
-  "maratua":       ["kecamatan maratua", "maratua"],
+  "maratua": ["kecamatan maratua", "maratua"],
 };
 
 function normalize(s: string) {
@@ -200,7 +200,7 @@ function findPlaceKeys(address: string): string[] {
   return [...new Set(hits)];
 }
 
-function midpoint(a: {lat:number; lng:number}, b: {lat:number; lng:number}) {
+function midpoint(a: { lat: number; lng: number }, b: { lat: number; lng: number }) {
   return { lat: (a.lat + b.lat) / 2, lng: (a.lng + b.lng) / 2 };
 }
 
@@ -230,6 +230,7 @@ export async function parseDetailPage(detailUrl: string): Promise<Partial<Stay>>
   const text = $.root().text().replace(/\s+/g, " ").trim();
 
   // helpers
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const cleanRowText = ($row: cheerio.Cheerio<any>) =>
     $row.clone().find("i, svg, a, span").remove().end().text().replace(/\s+/g, " ").trim();
 
@@ -320,26 +321,26 @@ export async function parseDetailPage(detailUrl: string): Promise<Partial<Stay>>
     }
   }
 
- // (4) fallback: geocode address
-if ((lat === undefined || lng === undefined) && address) {
-  const apiKey = process.env.GOOGLE_API_KEY;
-  if (apiKey) {
-    const coords = await geocodeAddress(address, apiKey);
-    if (coords) { lat = coords.lat; lng = coords.lng; }
+  // (4) fallback: geocode address
+  if ((lat === undefined || lng === undefined) && address) {
+    const apiKey = process.env.GOOGLE_API_KEY;
+    if (apiKey) {
+      const coords = await geocodeAddress(address, apiKey);
+      if (coords) { lat = coords.lat; lng = coords.lng; }
+    }
   }
-}
 
-// (5) last-resort: estimate from village names (e.g. "Teluk Harapan - Teluk Alulu")
-if (lat === undefined || lng === undefined) {
-  const est = estimateCoordsFromAddress(address);
-  if (est) { lat = est.lat; lng = est.lng; }
-}
+  // (5) last-resort: estimate from village names (e.g. "Teluk Harapan - Teluk Alulu")
+  if (lat === undefined || lng === undefined) {
+    const est = estimateCoordsFromAddress(address);
+    if (est) { lat = est.lat; lng = est.lng; }
+  }
 
-// final safety: still undefined? set to island centroid so nothing is null
-if (lat === undefined || lng === undefined) {
-  const island = PLACE_CENTROIDS["maratua"];
-  lat = island.lat; lng = island.lng;
-}
+  // final safety: still undefined? set to island centroid so nothing is null
+  if (lat === undefined || lng === undefined) {
+    const island = PLACE_CENTROIDS["maratua"];
+    lat = island.lat; lng = island.lng;
+  }
 
   return { name: name || undefined, address, phone, price, lat, lng };
 }

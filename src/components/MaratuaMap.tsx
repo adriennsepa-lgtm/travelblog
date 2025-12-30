@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect } from "react";
-import { MapContainer, TileLayer, Marker,  useMap, Tooltip } from "react-leaflet";
+import { MapContainer, TileLayer, Marker, useMap, Tooltip } from "react-leaflet";
 import L from "leaflet";
 import "leaflet/dist/leaflet.css";
 
@@ -32,18 +32,18 @@ const DefaultIcon = new L.Icon({
   popupAnchor: [1, -34],
   shadowSize: [41, 41],
 });
-L.Marker.prototype.options.icon = DefaultIcon as any;
+L.Marker.prototype.options.icon = DefaultIcon as L.Icon;
 
 // Types
- type HotelPin = {
+type HotelPin = {
   id: string;
   name: string;
   lat: number;
   lng: number;
-  url?: string; 
-  price?: string; 
-  rating?: number; 
-  image?: string; 
+  url?: string;
+  price?: string;
+  rating?: number;
+  image?: string;
   tags?: string[];
 };
 
@@ -77,7 +77,7 @@ const res = await fetch(
 );
 const stays = await res.json();
 
-console.log(stays,"jadesta stays" );
+console.log(stays, "jadesta stays");
 
 export default function AccomodationMap({
 
@@ -101,25 +101,25 @@ export default function AccomodationMap({
           url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
         />
 
-          {hotels.map((h) => (
-            <Marker key={h.name} position={[h.lat, h.lng]}>
+        {hotels.map((h) => (
+          <Marker key={h.name} position={[h.lat, h.lng]}>
 
-              <Tooltip>
-                <div className="space-y-1">
-                  <div className="font-semibold">{h.name}</div>
-                  {h.price && <div className="text-sm">Price: ~ {h.price}</div>}
-                  {h.url && (
-                    <a
-                      href={h.url}
-                      className="inline-block text-sm underline mt-1"
-                    >
-                      Read more
-                    </a>
-                  )}
-                </div>
-                </Tooltip>
-            </Marker>
-          ))}
+            <Tooltip>
+              <div className="space-y-1">
+                <div className="font-semibold">{h.name}</div>
+                {h.price && <div className="text-sm">Price: ~ {h.price}</div>}
+                {h.url && (
+                  <a
+                    href={h.url}
+                    className="inline-block text-sm underline mt-1"
+                  >
+                    Read more
+                  </a>
+                )}
+              </div>
+            </Tooltip>
+          </Marker>
+        ))}
       </MapContainer>
     </div>
   );

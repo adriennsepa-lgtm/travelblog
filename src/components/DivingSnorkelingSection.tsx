@@ -21,10 +21,9 @@ const DivingSnorkelingSection = () => {
             We found this spot the most enjoyable for diving and snorkeling.
             There is a wall that drops off to about 30 meters, teeming with
             vibrant coral and diverse marine life. The area is known for frequent
-            turtle sightings, and if you're lucky, you might even spot a reef shark
+            turtle sightings, and if {"you're"} lucky, you might even spot a reef shark
             or barracuda. Easily accessible from the shore.
           </p>
-
           <p className="mt-3 mb-6 max-w-prose text-neutral-700">
             <strong>Chanel</strong>: It is the most challanging spot due to strong currents, only for experienced divers.
 

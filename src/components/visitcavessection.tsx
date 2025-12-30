@@ -42,16 +42,16 @@ const CavesSection = () => {
 
         <div>
           <h2 className="text-3xl font-semibold tracking-tight text-neutral-900">
-            Explore Maratua's Caves
+            Explore {"Maratua's"} Caves
           </h2>
           <p className="mt-4 text-neutral-700">
-            Maratua’s caves are some of the island’s most intriguing hidden treasures.
+            {"Maratua's"} caves are some of the {"island's"} most intriguing hidden treasures.
             Dramatic limestone formations, secret pools, and openings to the turquoise sea
             make them a paradise for adventurers and divers alike.
           </p>
           <p className="mt-4 text-neutral-700">
             Whether you dive into crystal-clear cave lakes or wander through echoing caverns,
-            these natural wonders bring you closer to the island’s untold stories.
+            these natural wonders bring you closer to the {"island's"} untold stories.
           </p>
 
         </div>

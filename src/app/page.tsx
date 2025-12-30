@@ -20,7 +20,7 @@ const AccomodationMap = dynamic(() => import("../components/MaratuaMap"), {
 // Note: you can use local images too with next/image
 
 // app/page.tsx (Server Component)
-import type { Stay } from "@/lib/stays/types";
+// import type { Stay } from "@/lib/stays/types";
 
 // Drop your images in /public and update the constants below
 const MAINIMAGE = "/images/beach_with_palm_trees.webp";
