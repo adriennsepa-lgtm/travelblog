@@ -39,7 +39,7 @@ const uniqueStaysList = (
       // merge: prefer non-null values from curr
       for (const key of Object.keys(curr) as (keyof Stay)[]) {
         if (curr[key] != null) {
-          (existing as any)[key] = curr[key];
+          (existing as Record<keyof Stay, unknown>)[key] = curr[key];
         }
       }
       return acc;
